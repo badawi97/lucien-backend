@@ -47,11 +47,11 @@ namespace Lucien.HttpApi.Host
 
         public static void ConfigureServices(WebApplication app, IConfiguration configuration)
         {
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
