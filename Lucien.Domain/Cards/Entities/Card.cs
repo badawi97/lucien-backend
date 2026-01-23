@@ -1,12 +1,9 @@
-﻿
-
-using Lucien.Domain.Shared.Entities;
+﻿using Lucien.Domain.Shared.Entities;
 
 namespace Lucien.Domain.Cards.Entities
 {
-    public class Card : AuditableEntity
+    public class Card : AuditableEntity<Card>
     {
-        public Guid Id { get; private set; }
         public string? Name { get; private set; }
         public int? Gender { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
@@ -15,12 +12,7 @@ namespace Lucien.Domain.Cards.Entities
         public string? Photo { get; private set; }
         public string? Address { get; private set; }
 
-        private Card()
-        {
-            Id = Guid.NewGuid();
-        }
-
-        public Card Update(Card updatedCard)
+        public override Card Update(Card updatedCard)
         {
             if (!string.IsNullOrEmpty(updatedCard.Name))
             {

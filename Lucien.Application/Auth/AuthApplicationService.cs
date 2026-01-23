@@ -15,7 +15,6 @@ namespace Lucien.Application.Auth
         private readonly ITokenApplicationService _tokenApplicationService;
         private readonly IPasswordHasherApplicationService _passwordHasherApplicationService;
 
-
         public AuthApplicationService(
             IUserApplicationService userApplicationService,
             ITokenApplicationService tokenApplicationService,

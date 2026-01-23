@@ -1,6 +1,6 @@
 ﻿using Lucien.Application.Contracts.Cards.Dto;
 using Lucien.Application.Contracts.Cards.Interfaces;
-using Lucien.Application.Contracts.Common;
+using Lucien.Application.Contracts.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lucien.HttpApi.Host.Controllers

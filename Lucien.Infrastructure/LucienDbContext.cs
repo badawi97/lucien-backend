@@ -4,6 +4,8 @@ using Lucien.Domain.Shared.Entities;
 using Lucien.Domain.Shared.Interfaces;
 using Lucien.Domain.Users.Entities;
 using Lucien.Domain.Sessions.Entities;
+using Lucien.Infrastructure.Configurations;
+using Lucien.Domain.Roles.Entites;
 
 namespace Lucien.Infrastructure
 {
@@ -17,18 +19,21 @@ namespace Lucien.Infrastructure
             _userContextService = userContextService;
         }
 
-        // Define DbSet properties for entities
-
-        public DbSet<Card> Cards { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Session> Sessions { get; set; }
+        // Define DbSet properties for entities 
+        // add Global query filters for soft delete into OnModelCreating
+        // Apply configurations and schema for entities 
+        public DbSet<Card> Cards => Set<Card>();
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Session> Sessions => Set<Session>();
+        public DbSet<Role> Roles => Set<Role>();
+        public DbSet<Permission> Permissions => Set<Permission>();
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var currentUserId = _userContextService.GetCurrentUserId();
 
-            // Handle auditing for entities that implement AuditableEntity
-            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+            // Handle auditing for entities that implement AuditableEntityBase
+            foreach (var entry in ChangeTracker.Entries<AuditableEntityBase>())
             {
                 if (entry.State == EntityState.Added)
                 {
@@ -52,19 +57,21 @@ namespace Lucien.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Apply global filters and configurations for soft delete and other entities
-            modelBuilder.Entity<Card>()
-                .HasQueryFilter(e => !e.IsDeleted)
-                .ToTable("Cards");
-            modelBuilder.Entity<User>()
-                .HasQueryFilter(e => !e.IsDeleted)
-                .ToTable("Users", "identity");
-            modelBuilder.Entity<Session>()
-                .HasQueryFilter(e => !e.IsDeleted)
-                .ToTable("Sessions", "identity");
+            // Apply schema and table name for entities 
+            modelBuilder.Entity<Card>().ToTable("Cards");
+            modelBuilder.Entity<User>().ToTable("Users", "identity");
+            modelBuilder.Entity<Session>().ToTable("Sessions", "identity");
 
-            // Other entities can be configured here as needed
-            // Example: modelBuilder.Entity<OtherEntity>().HasQueryFilter(e => !e.IsDeleted);
+            // Apply entities configurations
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+
+            // Global query filters for soft delete
+            modelBuilder.Entity<Card>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Session>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Permission>().HasQueryFilter(e => !e.IsDeleted);
 
             base.OnModelCreating(modelBuilder);
         }

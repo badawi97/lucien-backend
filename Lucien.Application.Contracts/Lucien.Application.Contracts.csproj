@@ -17,6 +17,9 @@
 
   <ItemGroup>
     <Folder Include="Auth\Validators\" />
+    <Folder Include="Roles\Interfaces\" />
+    <Folder Include="Roles\Dto\" />
+    <Folder Include="Roles\Validators\" />
     <Folder Include="Sessions\Validators\" />
     <Folder Include="Token\Validators\" />
     <Folder Include="Users\Validators\" />

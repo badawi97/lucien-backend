@@ -2,11 +2,15 @@
 
 namespace Lucien.Domain.Sessions.Entities
 {
-    public class Session : AuditableEntity
+    public class Session : AuditableEntity<Session>
     {
-        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime ExpiresAt { get; set; }
+
+        public override Session Update(Session entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

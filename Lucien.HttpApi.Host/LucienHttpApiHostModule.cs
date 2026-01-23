@@ -15,77 +15,33 @@ namespace Lucien.HttpApi.Host
     {
         public static void PreConfigureServices(IServiceCollection services, ILoggingBuilder logging, IConfiguration configuration)
         {
+            string issuer = configuration["JwtSettings:Issuer"] ?? string.Empty;
+            string secretKey = configuration["JwtSettings:SecretKey"] ?? string.Empty;
+            string audience = configuration["JwtSettings:Audience"] ?? string.Empty;
+
+            // Register Controllers
+            ConfigureControllers(services);
+
             LucienApplicationModule.PreConfigureServices(services, configuration);
+
             LucienInfrastructureModule.PreConfigureServices(services, configuration);
 
             // Register CORS policy
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngularApp", policy =>
-                {
-                    policy
-                        .WithOrigins("http://localhost:4200")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
-            });
+            ConfigureCors(services, audience);
 
-            services.AddControllers();
+            // Register Endpoints Api Explorer
+            ConfigureEndpointsApiExplorer(services);
 
-            services.AddEndpointsApiExplorer();
+            // Register Authentication And Pull Token from Cookies
+            ConfigureAuthentication(services, issuer, audience, secretKey);
 
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //        .AddJwtBearer(options =>
-            //        {
-            //            options.TokenValidationParameters = new TokenValidationParameters
-            //            {
-            //                ValidateIssuer = true,
-            //                ValidateAudience = true,
-            //                ValidateLifetime = true,
-            //                ValidateIssuerSigningKey = true,
-            //                RequireExpirationTime = true,
-            //                ValidIssuer = configuration["JwtSettings:Issuer"],
-            //                ValidAudience = configuration["JwtSettings:Audience"],
-            //                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]?.ToString() ?? ""))
-            //            };
-            //        });
+            // Register Authorization
+            ConfigureAuthorization(services);
 
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        var jwtSettings = configuration["JwtSettings:Issuer"];
-
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidateLifetime = true,
-                            ValidateIssuerSigningKey = true,
-                            ValidIssuer = configuration["JwtSettings:Issuer"],
-                            ValidAudience = configuration["JwtSettings:Audience"],
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]?.ToString() ?? ""))
-                        };
-
-                        // Pull token from HttpOnly Cookie
-                        options.Events = new JwtBearerEvents
-                        {
-                            OnMessageReceived = context =>
-                            {
-                                if (context.Request.Cookies.TryGetValue("accessToken", out var token))
-                                {
-                                    context.Token = token;
-                                }
-                                return Task.CompletedTask;
-                            }
-                        };
-                    });
-
-            services.AddAuthorization();
-
+            // Register Swagger
             ConfigureSwagger(services);
 
+            // Register Logging
             ConfigureLogging(logging, configuration);
         }
 
@@ -157,6 +113,68 @@ namespace Lucien.HttpApi.Host
             }
 
             logging.AddProvider(new FileLoggerProvider(logDirectory));
+        }
+
+        private static void ConfigureCors(IServiceCollection services, string audience)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins(audience)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+        }
+
+        private static void ConfigureAuthentication(IServiceCollection services, string issuer, string audience, string secretKey)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = issuer,
+                            ValidAudience = audience,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                        };
+
+                        // Pull token from HttpOnly Cookies
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                if (context.Request.Cookies.TryGetValue("accessToken", out var token))
+                                {
+                                    context.Token = token;
+                                }
+                                return Task.CompletedTask;
+                            }
+                        };
+                    });
+
+        }
+
+        private static void ConfigureControllers(IServiceCollection services)
+        {
+            services.AddControllers();
+        }
+
+        private static void ConfigureEndpointsApiExplorer(IServiceCollection services)
+        {
+            services.AddEndpointsApiExplorer();
+        }
+
+        private static void ConfigureAuthorization(IServiceCollection services)
+        {
+            services.AddAuthorization();
         }
     }
 }

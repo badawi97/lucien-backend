@@ -13,6 +13,14 @@ namespace Lucien.Infrastructure
         {
             RegisterDbContext(services, configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Register MediatR (include assemblies that have your handlers)
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssemblies(
+                    typeof(LucienInfrastructureModule).Assembly, // Infrastructure
+                    typeof(LucienDomainModule).Assembly           // Domain/Application (handlers/events)
+                ));
+
             LucienDomainModule.PreConfigureServices(services, configuration);
         }
 

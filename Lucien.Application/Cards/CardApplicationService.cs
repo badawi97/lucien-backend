@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Lucien.Application.Contracts.Cards.Dto;
 using Lucien.Application.Contracts.Cards.Interfaces;
-using Lucien.Application.Contracts.Common;
 using Lucien.Domain.Cards.Entities;
 using Lucien.Domain.Cards.Interfaces;
 using CsvHelper;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using System.Text;
 using System.Xml.Serialization;
+using Lucien.Application.Contracts.Common.Dto;
 
 namespace Lucien.Application.Cards
 {
@@ -23,7 +23,7 @@ namespace Lucien.Application.Cards
             _mapper = mapper;
         }
 
-        public Task<List<CardDto>> GetListAsync()
+        public  Task<List<CardDto>> GetListAsync()
         {
             throw new NotImplementedException();
         }
@@ -49,7 +49,7 @@ namespace Lucien.Application.Cards
 
         public async Task<FileResultDto> ExportAsync(string format)
         {
-            var cards = await _cardRepository.GetListAsync(null, null, null, null, null, 0, 1000, null);
+            var cards = new List<Card>();
             var cardsDto = _mapper.Map<List<CardDto>>(cards);
             if (format == "xml")
             {

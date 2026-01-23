@@ -2,9 +2,8 @@
 
 namespace Lucien.Domain.Users.Entities
 {
-    public class User : AuditableEntity
+    public class User : AuditableEntity<User>
     {
-        public Guid Id { get; private set; }
         public string? FirstName { get; private set; }
         public string? LastName { get; private set; }
         public string? UserName { get; private set; }
@@ -16,12 +15,7 @@ namespace Lucien.Domain.Users.Entities
         public string? Address { get; private set; }
         public string? PasswordHash { get; set; }
 
-        private User()
-        {
-            Id = Guid.NewGuid();
-        }
-
-        public User Update(User updatedUser)
+        public override User Update(User updatedUser)
         {
             if (!string.IsNullOrEmpty(updatedUser.UserName))
             {

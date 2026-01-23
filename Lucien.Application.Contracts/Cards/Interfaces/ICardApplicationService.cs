@@ -1,5 +1,5 @@
 ﻿using Lucien.Application.Contracts.Cards.Dto;
-using Lucien.Application.Contracts.Common;
+using Lucien.Application.Contracts.Common.Dto;
 using Lucien.Domain.Shared.DI;
 using Microsoft.AspNetCore.Http;
 

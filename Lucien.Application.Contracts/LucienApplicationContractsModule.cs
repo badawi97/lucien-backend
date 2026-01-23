@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Lucien.Domain.Shared;
+using FluentValidation;
 
 namespace Lucien.Application.Contracts
 {
@@ -12,16 +13,14 @@ namespace Lucien.Application.Contracts
         {
             LucienDmainSharedModule.PreConfigureServices(services, configuration);
 
-            services.AddControllers().AddFluentValidation(fv =>
-            {
-                fv.RegisterValidatorsFromAssemblyContaining<CreateCardDtoValidator>();
-            });
-            services.AddControllers().AddFluentValidation(fv =>
-            {
-                fv.RegisterValidatorsFromAssemblyContaining<UpdateCardDtoValidator>();
-            });
+            // These must be called on IServiceCollection.
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
+
+            // Register validators (assembly scanning)
+            // Todo: move AddValidatorsFromAssemblyContaining as config on entity level .
+            services.AddValidatorsFromAssemblyContaining<CreateCardDtoValidator>();
+            services.AddValidatorsFromAssemblyContaining<UpdateCardDtoValidator>();
         }
-
-
     }
 }

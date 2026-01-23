@@ -1,4 +1,4 @@
-﻿namespace Lucien.Application.Contracts.Common
+﻿namespace Lucien.Application.Contracts.Common.Dto
 {
     public class FileResultDto
     {
