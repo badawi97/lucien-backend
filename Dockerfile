@@ -4,12 +4,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution
+# Copy everything
 COPY . .
 
-# Restore & publish ONLY the Host project
-RUN dotnet restore src/Lucien.HttpApi.Host/Lucien.HttpApi.Host.csproj
-RUN dotnet publish src/Lucien.HttpApi.Host/Lucien.HttpApi.Host.csproj \
+# Restore & publish the Host project
+RUN dotnet restore Lucien.HttpApi.Host/Lucien.HttpApi.Host.csproj
+RUN dotnet publish Lucien.HttpApi.Host/Lucien.HttpApi.Host.csproj \
     -c Release \
     -o /app/publish \
     --no-restore
@@ -22,7 +22,7 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-# Render requirement
+# Render port
 ENV ASPNETCORE_URLS=http://+:10000
 EXPOSE 10000
 
