@@ -55,14 +55,11 @@ namespace Lucien.Application.Auth
             if (existingUser != null)
                 throw new InvalidOperationException("Email already exists");
 
-            // hash password
-            string passwordHash = _passwordHasherApplicationService.HashPassword(registerDto.Password);
-
             // create user
             CreateUserDto user = new CreateUserDto
             {
                 Email = registerDto.Email,
-                PasswordHash = passwordHash,
+                Password = registerDto.Password,
                 Role = registerDto.Role,
                 Phone = registerDto.Phone,
             };
