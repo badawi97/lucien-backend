@@ -43,7 +43,7 @@ namespace Lucien.HttpApi.Host.Controllers
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ResultDto<UserDto>>> GetByEmailAsync([FromQuery] string email)
         {
-            var user = await _applicationService.GetByEmailAsync(email);
+            UserDto? user = await _applicationService.GetByEmailAsync(email);
             if (user == null)
                 return NotFound(ResultDto<UserDto>.Failure("User not found", 404));
 

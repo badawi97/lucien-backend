@@ -31,7 +31,7 @@ namespace Lucien.Application.Auth
 
         public async Task<TokenDto> LoginAsync(LoginDto loginDto)
         {
-            UserDto user = await _userApplicationService.GetByEmailAsync(loginDto.Email);
+            UserDto? user = await _userApplicationService.GetByEmailAsync(loginDto.Email);
             if (user == null)
             {
                 throw new UnauthorizedAccessException("User Not Found");
@@ -51,7 +51,7 @@ namespace Lucien.Application.Auth
         public async Task<TokenDto> RegisterAsync(RegisterDto registerDto)
         {
             // validate existing user
-            UserDto existingUser = await _userApplicationService.GetByEmailAsync(registerDto.Email);
+            UserDto? existingUser = await _userApplicationService.GetByEmailAsync(registerDto.Email);
             if (existingUser != null)
                 throw new InvalidOperationException("Email already exists");
 

@@ -60,7 +60,7 @@ namespace Lucien.Application.Users
                         break;
                     case "Gender":
                         sortingFunc = q => q.OrderBy(e => e.Gender);
-                        break;  
+                        break;
                     case "DateOfBirth":
                         sortingFunc = q => q.OrderBy(e => e.DateOfBirth);
                         break;
@@ -107,10 +107,11 @@ namespace Lucien.Application.Users
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UserDto> GetByEmailAsync(string? email)
+        public async Task<UserDto?> GetByEmailAsync(string? email)
         {
             var user = await _userRepository.GetByEmailAsync(email);
-            return _mapper.Map<UserDto>(user);
+
+            return user == null ? null : _mapper.Map<UserDto>(user);
         }
     }
 }
