@@ -3,12 +3,10 @@ using Lucien.Application.Contracts.Sessions.Interfaces;
 using Lucien.Application.Contracts.Token.Dtos;
 using Lucien.Application.Contracts.Token.Interfaces;
 using Lucien.Application.Contracts.Users.Dtos;
-using Lucien.Domain.Users.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Lucien.Application.Token

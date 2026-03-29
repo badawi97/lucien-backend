@@ -22,15 +22,15 @@ namespace Lucien.Infrastructure.Repositories.Users
             _logger = logger;
         }
 
-        public async Task<User> GetByEmailAsync(string? email)
+        public async Task<User?> GetByEmailAsync(string? email)
         {
             if (email == null) throw new ArgumentNullException("email");
 
             Expression<Func<User, bool>> predicate =
                 user => user.Email != null &&
                         user.Email.ToLower() == email;
-            return await _context.Users.FirstOrDefaultAsync(predicate)
-                   ?? throw new KeyNotFoundException($"User with email {email} was not found.");
+
+            return await _context.Users.FirstOrDefaultAsync(predicate);
         }
     }
 }
