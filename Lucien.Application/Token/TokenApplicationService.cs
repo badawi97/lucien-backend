@@ -36,7 +36,7 @@ namespace Lucien.Application.Token
 
             // Store new refresh token in DB need 
             CreateSessionDto createSessionDto = GenerateCreateSessionDto(user.Id, refreshToken);
-             await _sessionApplicationService.CreateAsync(createSessionDto);
+            await _sessionApplicationService.CreateAsync(createSessionDto);
 
             return new TokenDto
             {
@@ -83,8 +83,8 @@ namespace Lucien.Application.Token
             var claims = new List<Claim>
             {
                 new Claim("userId", user.Id.ToString()),
-                new Claim("userName ", user.UserName ?? ""),
-                new Claim("role", user.Role ?? "User")
+                new Claim("role", user.Role ?? "User"),
+                new Claim("email", user.Email ??"")
             };
 
             return GenerateToken(claims, expiryMinutes);

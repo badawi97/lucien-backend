@@ -7,6 +7,7 @@ namespace Lucien.Application.Contracts.Auth.Interfaces
     public interface IAuthApplicationService : ITransient
     {
         Task<TokenDto> LoginAsync(LoginDto loginDto);
+        Task<TokenDto> RegisterAsync(RegisterDto registerDto);
         Task<TokenDto> GetRefreshTokenAsync(string? refreshToken);
     }
 }

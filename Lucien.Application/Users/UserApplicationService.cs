@@ -27,12 +27,7 @@ namespace Lucien.Application.Users
             IQueryable<User> baseQuery = _userRepository.GetQueryable();
 
             // 2. Apply any filters (e.g., only active users)
-            // baseQuery = baseQuery.Where(u => u.IsActive); // optional filter example
-            if (!string.IsNullOrEmpty(input.UserName))
-            {
-                baseQuery = baseQuery.Where(user => user.UserName != null ? user.UserName.Contains(input.UserName) : true);
-            }
-
+            // baseQuery = baseQuery.Where(u => u.IsActive); // optional filter example            
             if (input.DateOfBirth.HasValue)
             {
                 baseQuery = baseQuery.Where(user => user.DateOfBirth != null ? user.DateOfBirth.Value.Date == input.DateOfBirth.Value.Date : true);
@@ -60,9 +55,6 @@ namespace Lucien.Application.Users
                 // Example: use System.Linq.Dynamic.Core or build expression dynamically
                 switch (input.Sorting)
                 {
-                    case "UserName":
-                        sortingFunc = q => q.OrderBy(e => e.UserName);
-                        break;
                     case "Email":
                         sortingFunc = q => q.OrderBy(e => e.Email);
                         break;

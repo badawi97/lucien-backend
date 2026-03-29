@@ -6,7 +6,6 @@ namespace Lucien.Domain.Users.Entities
     {
         public string? FirstName { get; private set; }
         public string? LastName { get; private set; }
-        public string? UserName { get; private set; }
         public int? Gender { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public string? Email { get; private set; }
@@ -17,10 +16,6 @@ namespace Lucien.Domain.Users.Entities
 
         public override User Update(User updatedUser)
         {
-            if (!string.IsNullOrEmpty(updatedUser.UserName))
-            {
-                UserName = updatedUser.UserName;
-            }
 
             if (updatedUser.DateOfBirth.HasValue)
             {
@@ -47,13 +42,6 @@ namespace Lucien.Domain.Users.Entities
                 PasswordHash = updatedUser.PasswordHash;
             }
             return this;
-        }
-
-        public void UpdateUserName(string userName)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-                throw new ArgumentException("UserName cannot be empty", nameof(userName));
-            UserName = userName;
         }
 
         public void UpdateEmail(string email)

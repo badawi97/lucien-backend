@@ -1,9 +1,10 @@
-﻿using Lucien.Domain.Users.Entities;
-using Lucien.Domain.Shared.Interfaces;
+﻿using Lucien.Domain.Shared.Interfaces;
+using Lucien.Domain.Users.Entities;
 using Lucien.Domain.Users.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Lucien.Infrastructure.Repositories.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace Lucien.Infrastructure.Repositories.Users
 {
@@ -25,7 +26,10 @@ namespace Lucien.Infrastructure.Repositories.Users
         {
             if (email == null) throw new ArgumentNullException("email");
 
-            return await _context.Users.FirstOrDefaultAsync(user => user.Email == email)
+            Expression<Func<User, bool>> predicate =
+                user => user.Email != null &&
+                        user.Email.ToLower() == email;
+            return await _context.Users.FirstOrDefaultAsync(predicate)
                    ?? throw new KeyNotFoundException($"User with email {email} was not found.");
         }
     }

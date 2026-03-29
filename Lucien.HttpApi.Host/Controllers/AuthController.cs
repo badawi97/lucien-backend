@@ -40,6 +40,33 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         /// <summary>
+        /// Registers a new user and issues tokens.
+        /// </summary>
+        [HttpPost("register")]
+        [ProducesResponseType(typeof(ResultDto<TokenDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResultDto<TokenDto>), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ResultDto<TokenDto>>> RegisterAsync([FromBody] RegisterDto registerDto)
+        {
+            try
+            {
+                if (registerDto.Password != registerDto.ConfirmPassword)
+                {
+                    return BadRequest(ResultDto<TokenDto>.Failure("Passwords do not match"));
+                }
+
+                var token = await _authService.RegisterAsync(registerDto);
+
+                SetTokenCookies(token);
+
+                return Ok(ResultDto<TokenDto>.Success(token, "User registered successfully"));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ResultDto<TokenDto>.Failure(ex.Message));
+            }
+        }
+
+        /// <summary>
         /// Logs out the user by removing tokens from cookies.
         /// </summary>
         [HttpPost("logout")]
