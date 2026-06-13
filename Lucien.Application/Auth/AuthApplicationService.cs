@@ -5,8 +5,6 @@ using Lucien.Application.Contracts.Token.Dtos;
 using Lucien.Application.Contracts.Token.Interfaces;
 using Lucien.Application.Contracts.Users.Dtos;
 using Lucien.Application.Contracts.Users.Interfaces;
-using Lucien.Domain.Users.Entities;
-using Lucien.Domain.Users.Interfaces;
 
 namespace Lucien.Application.Auth
 {
@@ -60,7 +58,7 @@ namespace Lucien.Application.Auth
             {
                 Email = registerDto.Email,
                 Password = registerDto.Password,
-                Role = registerDto.Role,
+                RoleId = registerDto.RoleId,
                 Phone = registerDto.Phone,
             };
 

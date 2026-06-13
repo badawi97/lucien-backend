@@ -1,4 +1,5 @@
-﻿using Lucien.Domain.Shared.Entities;
+using Lucien.Domain.Roles.Entites;
+using Lucien.Domain.Shared.Entities;
 
 namespace Lucien.Domain.Users.Entities
 {
@@ -13,6 +14,8 @@ namespace Lucien.Domain.Users.Entities
         public string? Photo { get; private set; }
         public string? Address { get; private set; }
         public string? PasswordHash { get; set; }
+        public Guid? RoleId { get; private set; }
+        public Role? Role { get; private set; }
 
         public override User Update(User updatedUser)
         {
@@ -41,7 +44,21 @@ namespace Lucien.Domain.Users.Entities
             {
                 PasswordHash = updatedUser.PasswordHash;
             }
+
+            if (updatedUser.RoleId.HasValue)
+            {
+                AssignRole(updatedUser.RoleId.Value);
+            }
+
             return this;
+        }
+
+        public void AssignRole(Guid roleId)
+        {
+            if (roleId == Guid.Empty)
+                throw new ArgumentException("RoleId cannot be empty", nameof(roleId));
+
+            RoleId = roleId;
         }
 
         public void UpdateEmail(string email)

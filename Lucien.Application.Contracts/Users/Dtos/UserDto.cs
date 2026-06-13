@@ -1,4 +1,6 @@
-﻿namespace Lucien.Application.Contracts.Users.Dtos
+using Lucien.Application.Contracts.Roles.Dtos;
+
+namespace Lucien.Application.Contracts.Users.Dtos
 {
     public class UserDto
     {
@@ -13,7 +15,8 @@
         public string? Photo { get; private set; }
         public string? Address { get; private set; }
         public string? PasswordHash { get; set; }
-        public string? Role { get; set; }
+        public Guid? RoleId { get; set; }
+        public RoleDto? Role { get; set; }
 
     }
 }

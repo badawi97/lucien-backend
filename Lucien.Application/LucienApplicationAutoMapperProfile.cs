@@ -19,9 +19,23 @@ namespace Lucien.Application
             CreateMap<Card, CreateCardDto>().ReverseMap();
             CreateMap<Card, UpdateCardDto>().ReverseMap();
 
-            CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<User, CreateUserDto>().ReverseMap();
-            CreateMap<User, UpdateUserDto>().ReverseMap();
+            CreateMap<User, UserDto>();
+            CreateMap<User, CreateUserDto>().ReverseMap()
+                .AfterMap((source, destination) =>
+                {
+                    if (source.RoleId.HasValue)
+                    {
+                        destination.AssignRole(source.RoleId.Value);
+                    }
+                });
+            CreateMap<User, UpdateUserDto>().ReverseMap()
+                .AfterMap((source, destination) =>
+                {
+                    if (source.RoleId.HasValue)
+                    {
+                        destination.AssignRole(source.RoleId.Value);
+                    }
+                });
 
             CreateMap<Role, RoleDto>();
             CreateMap<Permission, PermissionDto>()

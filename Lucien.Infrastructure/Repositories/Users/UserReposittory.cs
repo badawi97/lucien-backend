@@ -4,7 +4,6 @@ using Lucien.Domain.Users.Interfaces;
 using Lucien.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 
 namespace Lucien.Infrastructure.Repositories.Users
 {
@@ -26,11 +25,31 @@ namespace Lucien.Infrastructure.Repositories.Users
         {
             if (email == null) throw new ArgumentNullException("email");
 
-            Expression<Func<User, bool>> predicate =
-                user => user.Email != null &&
-                        user.Email.ToLower() == email;
+            return await GetQueryable()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(user => user.Email != null && user.Email.ToLower() == email);
+        }
 
-            return await _context.Users.FirstOrDefaultAsync(predicate);
+        public override async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await GetQueryable()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(user => user.Id == id, cancellationToken)
+                ?? throw new KeyNotFoundException($"User with Id {id} was not found.");
+        }
+
+        public override IQueryable<User> GetQueryable(bool includeSoftDeleted = false)
+        {
+            var query = _context.Users
+                .Include(user => user.Role)
+                .AsQueryable();
+
+            if (includeSoftDeleted)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+
+            return query;
         }
     }
 }

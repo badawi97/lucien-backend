@@ -73,8 +73,8 @@ namespace Lucien.Infrastructure.Repositories.Common
         /// <param name="id">id filtered.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>entity.</returns>
-        public async Task<TEntity> GetByIdAsync(Guid id,
-                                                CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetByIdAsync(Guid id,
+                                                        CancellationToken cancellationToken = default)
         {
             return await _context.Set<TEntity>()
                                  .AsNoTracking()
@@ -191,7 +191,7 @@ namespace Lucien.Infrastructure.Repositories.Common
         /// </summary>
         /// <param name="includeSoftDeleted">Whether to include soft-deleted entities by ignoring global query filters.</param>
         /// <returns>An <see cref="IQueryable{TEntity}"/> of the entity type.</returns>
-        public IQueryable<TEntity> GetQueryable(bool includeSoftDeleted = false)
+        public virtual IQueryable<TEntity> GetQueryable(bool includeSoftDeleted = false)
         {
             var query = _context.Set<TEntity>().AsQueryable();
 

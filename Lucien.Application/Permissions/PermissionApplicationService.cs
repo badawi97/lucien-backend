@@ -30,12 +30,6 @@ namespace Lucien.Application.Permissions
         {
             var permissions = await _permissionRepository.GetByRoleIdAsync(roleId);
             var permissionDtos = _mapper.Map<List<PermissionDto>>(permissions);
-
-            foreach (var permissionDto in permissionDtos)
-            {
-                permissionDto.RoleId = roleId;
-            }
-
             return permissionDtos;
         }
 
@@ -43,11 +37,10 @@ namespace Lucien.Application.Permissions
         {
             EnsureKnownPermission(input.Name);
 
-            var permission = new Permission(new PermissionName(input.Name!), _userContextService.GetCurrentUserId());
+            var permission = new Permission(new PermissionName(input.Name!), _userContextService.GetCurrentUserId(), roleId);
             var createdPermission = await _permissionRepository.CreateAsync(roleId, permission, _userContextService.GetCurrentUserId());
 
             var permissionDto = _mapper.Map<PermissionDto>(createdPermission);
-            permissionDto.RoleId = roleId;
 
             return permissionDto;
         }

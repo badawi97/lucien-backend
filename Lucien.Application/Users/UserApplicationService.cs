@@ -3,6 +3,8 @@ using Lucien.Application.Contracts.Auth.Interfaces;
 using Lucien.Application.Contracts.Common.Dto;
 using Lucien.Application.Contracts.Users.Dtos;
 using Lucien.Application.Contracts.Users.Interfaces;
+using Lucien.Domain.Roles.Entites;
+using Lucien.Domain.Roles.Interfaces;
 using Lucien.Domain.Users.Entities;
 using Lucien.Domain.Users.Interfaces;
 
@@ -11,12 +13,14 @@ namespace Lucien.Application.Users
     public class UserApplicationService : IUserApplicationService
     {
         private readonly IPasswordHasherApplicationService _passwordHasherApplicationService;
+        private readonly IRoleRepository _roleRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public UserApplicationService(IUserRepository userRepository, IMapper mapper, IPasswordHasherApplicationService passwordHasherApplicationService)
+        public UserApplicationService(IUserRepository userRepository, IMapper mapper, IPasswordHasherApplicationService passwordHasherApplicationService, IRoleRepository roleRepository)
         {
             _passwordHasherApplicationService = passwordHasherApplicationService;
+            _roleRepository = roleRepository;
             _userRepository = userRepository;
             _mapper = mapper;
         }
@@ -82,16 +86,21 @@ namespace Lucien.Application.Users
 
         public async Task<UserDto> CreateAsync(CreateUserDto input)
         {
+            var role = await GetRoleIfExistsAsync(input.RoleId);
             input.PasswordHash = _passwordHasherApplicationService.HashPassword(input.Password);
             var user = _mapper.Map<User>(input);
+
             var createdUser = await _userRepository.CreateAsync(user);
             return _mapper.Map<UserDto>(createdUser);
         }
 
         public async Task<UserDto> UpdateAsync(Guid id, UpdateUserDto input)
         {
+            var role = await GetRoleIfExistsAsync(input.RoleId);
+            input.Id = id;
             input.PasswordHash = _passwordHasherApplicationService.HashPassword(input.Password);
             var user = _mapper.Map<User>(input);
+    
             var updatedUser = await _userRepository.UpdateAsync(id, user);
             return _mapper.Map<UserDto>(updatedUser);
         }
@@ -112,6 +121,22 @@ namespace Lucien.Application.Users
             var user = await _userRepository.GetByEmailAsync(email);
 
             return user == null ? null : _mapper.Map<UserDto>(user);
+        }
+
+        private async Task<Role?> GetRoleIfExistsAsync(Guid? roleId)
+        {
+            if (!roleId.HasValue)
+            {
+                return null;
+            }
+
+            var role = await _roleRepository.GetByIdAsync(roleId.Value);
+            if (role == null)
+            {
+                throw new KeyNotFoundException($"Role with Id {roleId.Value} was not found.");
+            }
+
+            return role;
         }
     }
 }

@@ -3,6 +3,7 @@ using Lucien.Application.Contracts.Sessions.Interfaces;
 using Lucien.Application.Contracts.Token.Dtos;
 using Lucien.Application.Contracts.Token.Interfaces;
 using Lucien.Application.Contracts.Users.Dtos;
+using Lucien.Domain.Shared.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -81,8 +82,8 @@ namespace Lucien.Application.Token
             var claims = new List<Claim>
             {
                 new Claim("userId", user.Id.ToString()),
-                new Claim("role", user.Role ?? "User"),
-                new Claim("email", user.Email ??"")
+                new Claim("role", user.Role?.Name ?? string.Empty),
+                new Claim("email", user.Email ?? string.Empty)
             };
 
             return GenerateToken(claims, expiryMinutes);

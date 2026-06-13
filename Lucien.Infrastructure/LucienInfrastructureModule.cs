@@ -32,7 +32,7 @@ namespace Lucien.Infrastructure
 
         private static string GetConnectionString(IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString(ConnectionStringsConst.DefaultConnection);
+            var connectionString = configuration.GetConnectionString(ConnectionStringsConst.DefaultConnectionDev);
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new ArgumentException("Connection string is missing");
