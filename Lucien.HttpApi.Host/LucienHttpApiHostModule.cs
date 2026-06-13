@@ -1,9 +1,12 @@
 ﻿using Lucien.Application;
 using Lucien.Application.Contracts.Settings;
+using Lucien.HttpApi.Host.Authorization;
+using Lucien.Domain.Shared.Authorization;
 using Lucien.HttpApi.Host.Logging;
 using Lucien.HttpApi.Host.Middleware;
 using Lucien.HttpApi.Host.Settings;
 using Lucien.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -174,7 +177,19 @@ namespace Lucien.HttpApi.Host
 
         private static void ConfigureAuthorization(IServiceCollection services)
         {
-            services.AddAuthorization();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                foreach (var permission in PermissionNames.All)
+                {
+                    options.AddPolicy(permission, policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.AddRequirements(new PermissionRequirement(permission));
+                    });
+                }
+            });
         }
     }
 }

@@ -122,6 +122,9 @@ namespace Lucien.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
+                    b.HasIndex("RoleId", "Name")
+                        .IsUnique();
+
                     b.ToTable("Permissions", "identity");
                 });
 

@@ -34,6 +34,7 @@ namespace Lucien.Infrastructure.Configurations
             // Shadow FK to Role
             builder.Property<Guid>("RoleId").IsRequired();
             builder.HasIndex("RoleId");
+            builder.HasIndex("RoleId", "Name").IsUnique();
             builder.HasIndex(x => x.IsDeleted);
         }
     }

@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Roles\Dto\**" />
+    <EmbeddedResource Remove="Roles\Dto\**" />
+    <None Remove="Roles\Dto\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
@@ -18,7 +24,6 @@
   <ItemGroup>
     <Folder Include="Auth\Validators\" />
     <Folder Include="Roles\Interfaces\" />
-    <Folder Include="Roles\Dto\" />
     <Folder Include="Roles\Validators\" />
     <Folder Include="Sessions\Validators\" />
     <Folder Include="Token\Validators\" />

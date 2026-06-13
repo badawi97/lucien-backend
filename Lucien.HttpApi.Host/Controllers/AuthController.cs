@@ -2,6 +2,7 @@
 using Lucien.Application.Contracts.Auth.Interfaces;
 using Lucien.Application.Contracts.Common.Dto;
 using Lucien.Application.Contracts.Token.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lucien.HttpApi.Host.Controllers
@@ -70,6 +71,7 @@ namespace Lucien.HttpApi.Host.Controllers
         /// Logs out the user by removing tokens from cookies.
         /// </summary>
         [HttpPost("logout")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Logout()
         {

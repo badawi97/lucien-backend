@@ -1,6 +1,7 @@
-﻿using Lucien.Application.Contracts.Common.Dto;
+using Lucien.Application.Contracts.Common.Dto;
 using Lucien.Application.Contracts.Users.Dtos;
 using Lucien.Application.Contracts.Users.Interfaces;
+using Lucien.Domain.Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = PermissionNames.UsersRead)]
         [ProducesResponseType(typeof(ResultDto<PagedResultDto<UserDto>>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ResultDto<PagedResultDto<UserDto>>>> GetListAsync([FromQuery] PagedRequestUserDto input)
         {
@@ -27,6 +29,7 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize(Policy = PermissionNames.UsersRead)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ResultDto<UserDto>>> GetByIdAsync(Guid id)
@@ -39,6 +42,7 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         [HttpGet("by-email")]
+        [Authorize(Policy = PermissionNames.UsersRead)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ResultDto<UserDto>>> GetByEmailAsync([FromQuery] string email)
@@ -51,6 +55,7 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = PermissionNames.UsersCreate)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResultDto<UserDto>>> CreateAsync([FromBody] CreateUserDto input)
@@ -61,6 +66,7 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Policy = PermissionNames.UsersUpdate)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<UserDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ResultDto<UserDto>>> UpdateAsync(Guid id, [FromBody] UpdateUserDto input)
@@ -73,6 +79,7 @@ namespace Lucien.HttpApi.Host.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Policy = PermissionNames.UsersDelete)]
         [ProducesResponseType(typeof(ResultDto<string?>), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResultDto<string?>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ResultDto<string?>>> DeleteAsync(Guid id)
@@ -85,5 +92,4 @@ namespace Lucien.HttpApi.Host.Controllers
             return Ok(ResultDto<string?>.Success(null, "User deleted", 204));
         }
     }
-
 }

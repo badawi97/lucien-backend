@@ -2,6 +2,7 @@
 using Lucien.Domain.Roles.Interfaces;
 using Lucien.Domain.Shared.Interfaces;
 using Lucien.Infrastructure.Repositories.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Lucien.Infrastructure.Repositories.Roles
@@ -17,6 +18,17 @@ namespace Lucien.Infrastructure.Repositories.Roles
             _context = context;
             _userContextService = userContextService;
             _logger = logger;
+        }
+
+        public async Task<Role> RenameAsync(Guid id, string name, string actor, CancellationToken cancellationToken = default)
+        {
+            var role = await _context.Roles.FirstOrDefaultAsync(role => role.Id == id, cancellationToken)
+                ?? throw new KeyNotFoundException($"Role with Id {id} was not found.");
+
+            role.Rename(name, actor);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return role;
         }
     }
 }

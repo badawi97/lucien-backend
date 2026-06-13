@@ -57,12 +57,10 @@ namespace Lucien.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Apply schema and table name for entities 
-            modelBuilder.Entity<Card>().ToTable("Cards");
-            modelBuilder.Entity<User>().ToTable("Users", "identity");
-            modelBuilder.Entity<Session>().ToTable("Sessions", "identity");
-
             // Apply entities configurations
+            modelBuilder.ApplyConfiguration(new CardConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new SessionConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new PermissionConfiguration());
 

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Lucien.Application.Contracts.Cards.Dto;
+using Lucien.Application.Contracts.Permissions.Dtos;
+using Lucien.Application.Contracts.Roles.Dtos;
 using Lucien.Application.Contracts.Sessions.Dto;
 using Lucien.Application.Contracts.Users.Dtos;
 using Lucien.Domain.Cards.Entities;
+using Lucien.Domain.Roles.Entites;
 using Lucien.Domain.Sessions.Entities;
 using Lucien.Domain.Users.Entities;
 
@@ -19,6 +22,11 @@ namespace Lucien.Application
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, CreateUserDto>().ReverseMap();
             CreateMap<User, UpdateUserDto>().ReverseMap();
+
+            CreateMap<Role, RoleDto>();
+            CreateMap<Permission, PermissionDto>()
+                .ForMember(destination => destination.Name, options => options.MapFrom(source => source.Name.Value))
+                .ForMember(destination => destination.RoleId, options => options.Ignore());
 
             CreateMap<Session, SessionDto>().ReverseMap();
             CreateMap<Session, CreateSessionDto>().ReverseMap();
