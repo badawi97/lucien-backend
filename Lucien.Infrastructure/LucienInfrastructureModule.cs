@@ -1,5 +1,5 @@
 ﻿using Lucien.Domain;
-using Lucien.Domain.Settings;
+using Lucien.Domain.Shared.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +32,7 @@ namespace Lucien.Infrastructure
 
         private static string GetConnectionString(IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString(ConnectionStringsConst.DefaultConnectionDev);
+            var connectionString = configuration.GetConnectionString(ConnectionStringsConst.DefaultConnection);
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new ArgumentException("Connection string is missing");

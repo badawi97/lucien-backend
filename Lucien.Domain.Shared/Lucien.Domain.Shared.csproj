@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Localization\" />
-    <Folder Include="Users\Enums\" />
-    <Folder Include="Users\Constants\" />
     <Folder Include="Users\Extensions\" />
   </ItemGroup>
 

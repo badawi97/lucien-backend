@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Lucien.Domain.Roles.Entites;
+using Lucien.Domain.Shared.Settings;
 using Lucien.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace Lucien.HttpApi.Host.Authorization
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
-            var roleName = context.User.FindFirst("role")?.Value
+            var roleName = context.User.FindFirst(JwtClaimConst.Role)?.Value
                 ?? context.User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (string.IsNullOrWhiteSpace(roleName))

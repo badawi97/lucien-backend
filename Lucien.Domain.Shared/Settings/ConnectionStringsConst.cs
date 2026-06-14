@@ -1,4 +1,4 @@
-﻿namespace Lucien.Domain.Settings
+﻿namespace Lucien.Domain.Shared.Settings
 {
     public static class ConnectionStringsConst
     {

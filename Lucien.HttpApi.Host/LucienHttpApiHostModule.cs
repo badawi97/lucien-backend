@@ -1,13 +1,14 @@
 ﻿using Lucien.Application;
 using Lucien.Application.Contracts.Settings;
-using Lucien.HttpApi.Host.Authorization;
 using Lucien.Domain.Shared.Authorization;
+using Lucien.Domain.Shared.Settings;
+using Lucien.HttpApi.Host.Authorization;
 using Lucien.HttpApi.Host.Logging;
 using Lucien.HttpApi.Host.Middleware;
 using Lucien.HttpApi.Host.Settings;
 using Lucien.Infrastructure;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -18,9 +19,11 @@ namespace Lucien.HttpApi.Host
     {
         public static void PreConfigureServices(IServiceCollection services, ILoggingBuilder logging, IConfiguration configuration)
         {
-            string issuer = configuration["JwtSettings:Issuer"] ?? string.Empty;
-            string secretKey = configuration["JwtSettings:SecretKey"] ?? string.Empty;
-            string audience = configuration["JwtSettings:Audience"] ?? string.Empty;
+
+            var jwtSettings = configuration.GetSection(JwtConst.JwtSettings);
+            var secretKey = jwtSettings[JwtConst.SecretKey] ?? string.Empty;
+            var issuer = jwtSettings[JwtConst.Issuer] ?? string.Empty;
+            var audience = jwtSettings[JwtConst.Audience] ?? string.Empty;
 
             // Register Controllers
             ConfigureControllers(services);
@@ -52,13 +55,13 @@ namespace Lucien.HttpApi.Host
         {
             //if (app.Environment.IsDevelopment())
             //{
-                app.UseSwagger();
-                app.UseSwaggerUI();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             //}
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-            app.UseCors("AllowAngularApp");
+            app.UseCors(CorsConst.AllowApp);
 
             app.UseHttpsRedirection();
 
@@ -73,16 +76,16 @@ namespace Lucien.HttpApi.Host
             // Configure Swagger with JWT Authentication
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc(SwaggerConst.Version, new OpenApiInfo { Title = SwaggerConst.OpenApiInfoTitle, Version = SwaggerConst.Version });
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.AddSecurityDefinition(SwaggerConst.SecurityDefinition, new OpenApiSecurityScheme
                 {
-                    Name = "Authorization",
+                    Name = SwaggerConst.SecurityDefinitionName,
                     Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
+                    Scheme = SwaggerConst.SecurityDefinitionScheme,
+                    BearerFormat = SwaggerConst.SecurityDefinitionBearerFormat,
                     In = ParameterLocation.Header,
-                    Description = "Enter your token. Example: \"your_token_here\""
+                    Description = SwaggerConst.SecurityDefinitionDescription
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -90,7 +93,7 @@ namespace Lucien.HttpApi.Host
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = SwaggerConst.OpenApiReferenceId }
                         },
                         Array.Empty<string>()
                     }
@@ -122,7 +125,7 @@ namespace Lucien.HttpApi.Host
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAngularApp", policy =>
+                options.AddPolicy(CorsConst.AllowApp, policy =>
                 {
                     policy.WithOrigins(audience)
                           .AllowAnyHeader()
@@ -154,7 +157,7 @@ namespace Lucien.HttpApi.Host
                         {
                             OnMessageReceived = context =>
                             {
-                                if (context.Request.Cookies.TryGetValue("accessToken", out var token))
+                                if (context.Request.Cookies.TryGetValue(CookieConst.AaccessToken, out var token))
                                 {
                                     context.Token = token;
                                 }

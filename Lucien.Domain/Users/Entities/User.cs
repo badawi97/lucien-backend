@@ -1,5 +1,6 @@
 using Lucien.Domain.Roles.Entites;
 using Lucien.Domain.Shared.Entities;
+using Lucien.Domain.Shared.Users.Constants;
 
 namespace Lucien.Domain.Users.Entities
 {
@@ -56,7 +57,7 @@ namespace Lucien.Domain.Users.Entities
         public void AssignRole(Guid roleId)
         {
             if (roleId == Guid.Empty)
-                throw new ArgumentException("RoleId cannot be empty", nameof(roleId));
+                throw new ArgumentException(UserExceptionConst.RoleIdEmpty, nameof(roleId));
 
             RoleId = roleId;
         }
@@ -64,14 +65,14 @@ namespace Lucien.Domain.Users.Entities
         public void UpdateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email cannot be empty", nameof(email));
+                throw new ArgumentException(UserExceptionConst.EmailEmpty, nameof(email));
             Email = email;
         }
 
         public void UpdatePhone(string phone)
         {
             if (string.IsNullOrWhiteSpace(phone))
-                throw new ArgumentException("Phone cannot be empty", nameof(phone));
+                throw new ArgumentException(UserExceptionConst.PhoneEmpty, nameof(phone));
             Phone = phone;
         }
     }

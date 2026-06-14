@@ -3,7 +3,7 @@ using Lucien.Application.Contracts.Sessions.Interfaces;
 using Lucien.Application.Contracts.Token.Dtos;
 using Lucien.Application.Contracts.Token.Interfaces;
 using Lucien.Application.Contracts.Users.Dtos;
-using Lucien.Domain.Shared.Authorization;
+using Lucien.Domain.Shared.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -48,8 +48,8 @@ namespace Lucien.Application.Token
 
         private CreateSessionDto GenerateCreateSessionDto(Guid userId, string refreshToken)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var tefreshExpiryDays = int.Parse(jwtSettings["RefreshExpiryDays"] ?? "0");
+            var jwtSettings = _configuration.GetSection(JwtConst.JwtSettings);
+            var tefreshExpiryDays = int.Parse(jwtSettings[JwtConst.RefreshExpiryDays] ?? "0");
 
             return new CreateSessionDto
             {
@@ -61,13 +61,13 @@ namespace Lucien.Application.Token
 
         private JwtSecurityToken GenerateRefreshToken(Guid userId)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var jwtSettings = _configuration.GetSection(JwtConst.JwtSettings);
 
-            var expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"] ?? "60");
+            var expiryMinutes = int.Parse(jwtSettings[JwtConst.ExpiryMinutes] ?? "60");
 
             var claims = new List<Claim>
             {
-                new Claim("userId", userId.ToString()),
+                new Claim(JwtClaimConst.Email, userId.ToString()),
             };
 
             return GenerateToken(claims, expiryMinutes);
@@ -75,15 +75,15 @@ namespace Lucien.Application.Token
 
         private JwtSecurityToken GenerateAccessToken(UserDto user)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var jwtSettings = _configuration.GetSection(JwtConst.JwtSettings);
 
-            var expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"] ?? "60");
+            var expiryMinutes = int.Parse(jwtSettings[JwtConst.ExpiryMinutes] ?? "60");
 
             var claims = new List<Claim>
             {
-                new Claim("userId", user.Id.ToString()),
-                new Claim("role", user.Role?.Name ?? string.Empty),
-                new Claim("email", user.Email ?? string.Empty)
+                new Claim(JwtClaimConst.UserId, user.Id.ToString()),
+                new Claim(JwtClaimConst.Role, user.Role?.Name ?? string.Empty),
+                new Claim(JwtClaimConst.Email, user.Email ?? string.Empty)
             };
 
             return GenerateToken(claims, expiryMinutes);
@@ -91,10 +91,10 @@ namespace Lucien.Application.Token
 
         private JwtSecurityToken GenerateToken(List<Claim> claims, int expiryMinutes)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"];
-            var issuer = jwtSettings["Issuer"];
-            var audience = jwtSettings["Audience"];
+            var jwtSettings = _configuration.GetSection(JwtConst.JwtSettings);
+            var secretKey = jwtSettings[JwtConst.SecretKey];
+            var issuer = jwtSettings[JwtConst.Issuer];
+            var audience = jwtSettings[JwtConst.Audience];
 
             if (string.IsNullOrEmpty(secretKey))
             {

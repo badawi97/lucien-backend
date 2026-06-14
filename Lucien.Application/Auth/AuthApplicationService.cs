@@ -5,6 +5,7 @@ using Lucien.Application.Contracts.Token.Dtos;
 using Lucien.Application.Contracts.Token.Interfaces;
 using Lucien.Application.Contracts.Users.Dtos;
 using Lucien.Application.Contracts.Users.Interfaces;
+using Lucien.Domain.Shared.Auth.Constants;
 
 namespace Lucien.Application.Auth
 {
@@ -32,7 +33,7 @@ namespace Lucien.Application.Auth
             UserDto? user = await _userApplicationService.GetByEmailAsync(loginDto.Email);
             if (user == null)
             {
-                throw new UnauthorizedAccessException("User Not Found");
+                throw new UnauthorizedAccessException(AuthExceptionConst.UserNotFound);
             }
             if (string.IsNullOrEmpty(user.PasswordHash))
             {
@@ -51,7 +52,7 @@ namespace Lucien.Application.Auth
             // validate existing user
             UserDto? existingUser = await _userApplicationService.GetByEmailAsync(registerDto.Email);
             if (existingUser != null)
-                throw new InvalidOperationException("Email already exists");
+                throw new InvalidOperationException(AuthExceptionConst.EmailAlreadyExists);
 
             // create user
             CreateUserDto user = new CreateUserDto

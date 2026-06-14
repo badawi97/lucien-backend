@@ -1,5 +1,6 @@
 ﻿using Lucien.Domain.Shared;
 using Lucien.Domain.Shared.DI;
+using Lucien.Domain.Shared.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -57,7 +58,7 @@ namespace Lucien.Domain
             try
             {
                 // Check if the assembly contains any type ending with "ApplicationService"
-                return assembly.GetTypes().Any(t => t.Name.EndsWith("ApplicationService"));
+                return assembly.GetTypes().Any(t => t.Name.EndsWith(LucienLayerConst.ApplicationService));
             }
             catch
             {
