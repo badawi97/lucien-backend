@@ -2,6 +2,7 @@
 {
     public static class CorsConst
     {
-        public const string AllowApp = "AllowAngularApp";
+        public const string AllowAppDev = "http://localhost:4200/";
+        public const string AllowApp = "https://lucien-frontend.onrender.com/";
     }
 }
